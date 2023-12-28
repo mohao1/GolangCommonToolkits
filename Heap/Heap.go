@@ -1,4 +1,4 @@
-package DataStructure
+package Heap
 
 import "container/heap"
 
