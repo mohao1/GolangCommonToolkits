@@ -2,6 +2,10 @@ package Heap
 
 import "container/heap"
 
+/**
+本库的Heap的封装实现使用了container/heap中的heap接口
+*/
+
 // 小顶堆MinHeap
 type minHeap []int
 

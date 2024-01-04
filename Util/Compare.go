@@ -2,6 +2,11 @@ package Util
 
 import "strconv"
 
+/**
+使用了基本库的strconv进行数据转换
+Max/Min方法实现了数据的判断然后取最小值
+*/
+
 // Max Int选大的
 func Max(i, j int) int {
 	if i > j {
