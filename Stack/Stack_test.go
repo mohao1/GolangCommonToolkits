@@ -1,12 +1,14 @@
 package Stack
 
 import (
+	"common-toolkits-v1/Stack/LinkStack"
+	"common-toolkits-v1/Stack/Stack"
 	"fmt"
 	"testing"
 )
 
 func TestNewStack(t *testing.T) {
-	newStack := NewStack[string](10)
+	newStack := Stack.NewStack[string](10)
 	newStack.Push("1")
 	newStack.Push("3")
 	newStack.Push("2")
@@ -18,7 +20,7 @@ func TestNewStack(t *testing.T) {
 }
 
 func TestNewStack_Peek(t *testing.T) {
-	newStack := NewStack[string](10)
+	newStack := Stack.NewStack[string](10)
 	fmt.Println(newStack.Peek())
 	newStack.Push("1")
 	newStack.Push("3")
@@ -29,11 +31,10 @@ func TestNewStack_Peek(t *testing.T) {
 }
 
 func TestLinkNewStack_Peek(t *testing.T) {
-	newlinkStack := NewLinkStack[string](4)
+	newlinkStack := LinkStack.NewLinkStack[string](4)
 	fmt.Println("----")
 	fmt.Println(newlinkStack.Peek())
 	fmt.Println(newlinkStack.Push("1"))
-	fmt.Println(newlinkStack.data.curNode.Data)
 	newlinkStack.Push("6")
 	fmt.Println(newlinkStack.Peek())
 	newlinkStack.Push("2")

@@ -1,4 +1,4 @@
-package Stack
+package LinkStack
 
 type Node[T any] struct {
 	Data    T
