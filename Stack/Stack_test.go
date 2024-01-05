@@ -27,3 +27,18 @@ func TestNewStack_Peek(t *testing.T) {
 	newStack.Push("6")
 	fmt.Println(newStack.Peek())
 }
+
+func TestLinkNewStack_Peek(t *testing.T) {
+	newlinkStack := NewLinkStack[string](4)
+	fmt.Println("----")
+	fmt.Println(newlinkStack.Peek())
+	fmt.Println(newlinkStack.Push("1"))
+	fmt.Println(newlinkStack.data.curNode.Data)
+	newlinkStack.Push("6")
+	fmt.Println(newlinkStack.Peek())
+	newlinkStack.Push("2")
+	fmt.Println(newlinkStack.Pop())
+	fmt.Println(newlinkStack.Pop())
+	fmt.Println(newlinkStack.Pop())
+	fmt.Println(newlinkStack.Pop())
+}
