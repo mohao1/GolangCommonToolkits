@@ -1,6 +1,7 @@
 package Queue
 
 import (
+	"common-toolkits-v1/Queue/LinkQueue"
 	"common-toolkits-v1/Queue/Queue"
 	"fmt"
 	"testing"
@@ -19,6 +20,23 @@ func TestQueue(t *testing.T) {
 	fmt.Println(queue.Pop())
 	fmt.Println(queue.Pop())
 	fmt.Println(queue.Peek())
+	fmt.Println(queue.Pop())
+
+}
+
+func TestLinkQueue(t *testing.T) {
+	queue := LinkQueue.NewLinkQueue[int](3)
+	queue.Push(1)
+	queue.Push(2)
+	queue.Push(5)
+	fmt.Println(queue.Pop())
+	fmt.Println(queue.Pop())
+	fmt.Println(queue.Pop())
+	queue.Push(5)
+	queue.Push(2)
+	queue.Push(1)
+	fmt.Println(queue.Pop())
+	fmt.Println(queue.Pop())
 	fmt.Println(queue.Pop())
 
 }
