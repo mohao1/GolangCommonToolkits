@@ -18,6 +18,8 @@ Golang常用数据扩展工具包。
 4. Util 工具
 - Compare：选择二数选一，选择大/小。
 - Equal：数据比较，比较数据大小。
+5. ExecutorsPool：线程
+- Executors：线程池
 
 **持续更新**
 
