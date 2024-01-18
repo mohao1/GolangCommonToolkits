@@ -2,6 +2,11 @@ package Util
 
 import "reflect"
 
+/**
+两种数据相同类型进行数据比较比较数据是否相同
+*/
+
+// Equal 相同类型数据比较
 func Equal(m1, m2 any) bool {
 	//nil情况下的处理逻辑
 	if m1 == nil || m2 == nil {
