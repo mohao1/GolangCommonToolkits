@@ -67,7 +67,7 @@ func (l *LinkList[T]) UpData(index int, val T) bool {
 }
 
 func (l *LinkList[T]) Insert(index int, val T) bool {
-	if index > l.length {
+	if index > l.length+1 {
 		return false
 	}
 	pre := l.node
