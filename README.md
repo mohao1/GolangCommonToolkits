@@ -22,6 +22,7 @@ Golang常用数据扩展工具包。
 - Executors：线程池
 6. List：链表
 - LinkList：单向链表
+- BLinkList：双向链表
 
 **持续更新**
 
