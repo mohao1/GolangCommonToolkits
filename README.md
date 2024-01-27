@@ -20,6 +20,8 @@ Golang常用数据扩展工具包。
 - Equal：数据比较，比较数据大小。
 5. ExecutorsPool：线程
 - Executors：线程池
+6. List：链表
+- LinkList：单向链表
 
 **持续更新**
 
