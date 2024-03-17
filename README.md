@@ -3,6 +3,10 @@
 ## 介绍
 Golang常用数据扩展工具包。
 
+## 项目地址
+- GitHub:https://github.com/mohao1/GolangCommonToolkits?tab=readme-ov-file
+- Gitee:https://gitee.com/mohaos/golang-common-toolkits
+
 ## 功能设计
 
 **模块设计**
