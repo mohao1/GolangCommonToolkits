@@ -8,9 +8,9 @@ import (
 )
 
 type Interface interface {
-	LpushCtx(ctx context.Context, key string, value interface{}) (int, error)
-	RpopCtx(ctx context.Context, key string) (string, error)
-	LlenCtx(ctx context.Context, key string) (int, error)
+	LPushCtx(ctx context.Context, key string, value interface{}) (int, error)
+	RPopCtx(ctx context.Context, key string) (string, error)
+	LLenCtx(ctx context.Context, key string) (int, error)
 }
 
 type RedisConfig struct {

@@ -6,7 +6,7 @@ import (
 
 // RedisQueue 定义 Redis 队列结构体
 type RedisQueue struct {
-	client    *RedisClient
+	client    Interface
 	queueName string
 }
 
@@ -24,7 +24,7 @@ func NewRedisQueueConfig(redisConfig RedisConfig, queueName string) *RedisQueue 
 }
 
 // NewRedisQueueByClient 自定义redisClient创建队列
-func NewRedisQueueByClient(redisClient *RedisClient, queueName string) *RedisQueue {
+func NewRedisQueueByClient(redisClient Interface, queueName string) *RedisQueue {
 	return &RedisQueue{
 		client:    redisClient,
 		queueName: queueName,
