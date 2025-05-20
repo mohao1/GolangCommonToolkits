@@ -5,7 +5,6 @@ import (
 	"errors"
 	"fmt"
 	"github.com/go-redis/redis/v8"
-	"sync"
 	"time"
 )
 
@@ -18,21 +17,10 @@ var (
 
 // BasicLock 基础锁
 type BasicLock struct {
-	client   redis.UniversalClient // Redis client - Redis服务
-	key      string                // lock key - 锁的Key
-	value    string                // lock value - 锁的Value
-	mu       sync.Mutex            // lock  - 锁的操作的锁
-	released bool                  // is released - 是否已被释放
-	expiry   time.Duration         // lock time - 锁的超时时间
-}
-
-func NewBasicLock(client redis.UniversalClient, key, value string) *BasicLock {
-	return &BasicLock{
-		client:   client,
-		key:      key,
-		value:    value,
-		released: false,
-	}
+	client redis.UniversalClient // Redis client - Redis服务
+	key    string                // lock key - 锁的Key
+	value  string                // lock value - 锁的Value
+	expiry time.Duration         // lock time - 锁的超时时间
 }
 
 // Lock 获取锁
@@ -47,12 +35,6 @@ func (l *BasicLock) lock(ctx context.Context) (bool, error) {
 
 // UnLock 释放锁
 func (l *BasicLock) unLock(ctx context.Context) (bool, error) {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-
-	if l.released {
-		return false, nil
-	}
 
 	// 使用Lua脚本保证原子性释放锁
 	luaScript := `
@@ -68,18 +50,11 @@ func (l *BasicLock) unLock(ctx context.Context) (bool, error) {
 		return false, fmt.Errorf("redis operation failed: %w", err)
 	}
 
-	l.released = true
 	return res.(int64) == 1, nil
 }
 
 // Renewal 续期锁
 func (l *BasicLock) renewal(ctx context.Context) (bool, error) {
-	l.mu.Lock()
-	defer l.mu.Unlock()
-
-	if l.released {
-		return false, ErrInvalidLock
-	}
 
 	// 使用Lua脚本检查并续期锁
 	luaScript := `

@@ -26,24 +26,10 @@ type SingleLockConfig struct {
 	expiry time.Duration // lock time - 锁的超时时间
 }
 
-// NewDefaultLockConfig 创建默认LockConfig
-func NewDefaultLockConfig() *SingleLockConfig {
-	return &SingleLockConfig{
-		Config: Config{
-			retryTimes: defaultRetryTimes,
-			retryDelay: defaultRetryDelay,
-			keyPrefix:  defaultKeyPrefix,
-		},
-		expiry: defaultLockExpiry,
-	}
-}
-
 // RedLockConfig RedLock锁的配置
 type RedLockConfig struct {
-	expiry     time.Duration // lock time - 锁的超时时间
-	retryTimes int           // retry count - 锁的重试次数
-	retryDelay time.Duration // retry time - 锁的重试间隔时间
-	keyPrefix  string        // KeyPrefix - key的标识
+	Config
+	expiry time.Duration // lock time - 锁的超时时间
 }
 
 // 生成唯一标识
