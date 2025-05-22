@@ -1,4 +1,4 @@
-package logs
+package logx
 
 import (
 	"log"
@@ -6,10 +6,10 @@ import (
 )
 
 func TestDefaultLogger(t *testing.T) {
-	Trace.Println("Trace-输出")
-	Info.Println("Info-输出")
-	Warning.Println("Warning-输出")
-	Error.Println("Error-输出")
+	TraceLevel.Println("Trace-输出")
+	InfoLevel.Println("Info-输出")
+	WarningLevel.Println("Warning-输出")
+	ErrorLevel.Println("Error-输出")
 }
 
 func TestInitLogger(t *testing.T) {
@@ -45,8 +45,8 @@ func TestInitLogger(t *testing.T) {
 		return
 	}
 
-	Trace.Println("Trace-输出")
-	Info.Println("Info-输出")
-	Warning.Println("Warning-输出")
-	Error.Println("Error-输出")
+	TraceLevel.Println("Trace-输出")
+	InfoLevel.Println("Info-输出")
+	WarningLevel.Println("Warning-输出")
+	ErrorLevel.Println("Error-输出")
 }

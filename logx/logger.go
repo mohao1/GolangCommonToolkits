@@ -1,4 +1,4 @@
-package logs
+package logx
 
 import (
 	"fmt"
@@ -18,6 +18,10 @@ var defaultConfig = LogConfig{
 		isConsole:   true,
 		ConsoleMode: InfoMode,
 	},
+	DeBugOutput: OutputInfo{
+		isConsole:   true,
+		ConsoleMode: InfoMode,
+	},
 	WarningOutput: OutputInfo{
 		isConsole:   true,
 		ConsoleMode: InfoMode,
@@ -30,10 +34,11 @@ var defaultConfig = LogConfig{
 }
 
 var (
-	Trace   *log.Logger
-	Info    *log.Logger
-	Warning *log.Logger
-	Error   *log.Logger
+	TraceLevel   *log.Logger
+	InfoLevel    *log.Logger
+	WarningLevel *log.Logger
+	ErrorLevel   *log.Logger
+	DeBugLevel   *log.Logger
 
 	initialized bool
 	mu          sync.Mutex
@@ -48,10 +53,11 @@ func init() {
 	if err := InitLogger(nil); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Failed to initialize default logger: %v\n", err)
 		// 回退到基本日志配置
-		Trace = log.New(io.Discard, "TRACE: ", log.Ldate|log.Ltime|log.Lshortfile)
-		Info = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-		Warning = log.New(os.Stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
-		Error = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+		TraceLevel = log.New(io.Discard, "TRACE: ", log.Ldate|log.Ltime|log.Lshortfile)
+		InfoLevel = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
+		DeBugLevel = log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
+		WarningLevel = log.New(os.Stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
+		ErrorLevel = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
 	}
 }
 
@@ -69,25 +75,31 @@ func InitLogger(config *LogConfig) error {
 	var err error
 
 	// Trace - 追踪日志
-	Trace, err = createLogger(config.TraceOutput, "TRACE: ", config.Flags)
+	TraceLevel, err = createLogger(config.TraceOutput, "TRACE: ", config.Flags)
 	if err != nil {
 		return fmt.Errorf("failed to initialize trace logger: %v", err)
 	}
 
 	// Info - 信息日志
-	Info, err = createLogger(config.InfoOutput, "INFO: ", config.Flags)
+	InfoLevel, err = createLogger(config.InfoOutput, "INFO: ", config.Flags)
 	if err != nil {
 		return fmt.Errorf("failed to initialize info logger: %v", err)
 	}
 
+	// Warning - 调试日志
+	DeBugLevel, err = createLogger(config.DeBugOutput, "DEBUG: ", config.Flags)
+	if err != nil {
+		return fmt.Errorf("failed to initialize warning logger: %v", err)
+	}
+
 	// Warning - 警告日志
-	Warning, err = createLogger(config.WarningOutput, "WARNING: ", config.Flags)
+	WarningLevel, err = createLogger(config.WarningOutput, "WARNING: ", config.Flags)
 	if err != nil {
 		return fmt.Errorf("failed to initialize warning logger: %v", err)
 	}
 
 	// Error - 错误日志
-	Error, err = createLogger(config.ErrorOutput, "ERROR: ", config.Flags)
+	ErrorLevel, err = createLogger(config.ErrorOutput, "ERROR: ", config.Flags)
 	if err != nil {
 		return fmt.Errorf("failed to initialize error logger: %v", err)
 	}
@@ -160,13 +172,13 @@ func createWriter(outputPath ConsoleMode) (io.Writer, error) {
 }
 
 // Reset 重置日志配置
-func Reset() {
+func reset() {
 	mu.Lock()
 	defer mu.Unlock()
 
-	Trace = nil
-	Info = nil
-	Warning = nil
-	Error = nil
+	TraceLevel = nil
+	InfoLevel = nil
+	WarningLevel = nil
+	ErrorLevel = nil
 	initialized = false
 }
