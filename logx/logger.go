@@ -142,6 +142,11 @@ func createLogger(outputInfo OutputInfo, prefix string, flags int) (*log.Logger,
 		}
 	}
 
+	// 自定义的log的操作
+	if outputInfo.IsCustom && outputInfo.CustomWriter != nil {
+		writerList = append(writerList, *outputInfo.CustomWriter)
+	}
+
 	return log.New(io.MultiWriter(writerList...), prefix, flags), nil
 }
 

@@ -1,5 +1,7 @@
 package logx
 
+import "io"
+
 // LogConfig 配置结构
 type LogConfig struct {
 	TraceOutput   OutputInfo // 追踪日志输出位置
@@ -15,6 +17,8 @@ type OutputInfo struct {
 	ConsoleMode  ConsoleMode
 	isOutputFile bool
 	OutputFile   []string
+	IsCustom     bool       // 是否设置自定义的处理操作
+	CustomWriter *io.Writer // 自定义的处理操作
 }
 
 type ConsoleMode string
