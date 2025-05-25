@@ -2,41 +2,52 @@ package logs
 
 import (
 	"common-toolkits-v1/logx"
+	"fmt"
+	"os"
 )
 
 // Warning 函数
 func Warning(v ...any) {
-	logx.WarningLevel.Print(v)
+	logx.WarningLevel.Output(2, fmt.Sprint(v...))
 }
 
 func WarningF(info string, v ...any) {
-	logx.WarningLevel.Printf(info, v)
+	logx.WarningLevel.Output(2, fmt.Sprintf(info, v...))
 }
 
 func Warningln(v any) {
-	logx.WarningLevel.Println(v)
+	logx.WarningLevel.Output(2, fmt.Sprintln(v))
 }
 
 func WarningFatal(v ...any) {
-	logx.WarningLevel.Fatal(v)
+	logx.WarningLevel.Output(2, fmt.Sprint(v...))
+	os.Exit(1)
 }
 
 func WarningFatalf(format string, v ...any) {
-	logx.WarningLevel.Fatalf(format)
+	logx.WarningLevel.Output(2, fmt.Sprintf(format, v...))
+	os.Exit(1)
 }
 
 func WarningFatalln(v ...any) {
-	logx.WarningLevel.Fatalln(v)
+	logx.WarningLevel.Output(2, fmt.Sprintln(v...))
+	os.Exit(1)
 }
 
 func WarningPanic(v ...any) {
-	logx.WarningLevel.Panic(v)
+	s := fmt.Sprint(v...)
+	logx.WarningLevel.Output(2, s)
+	panic(s)
 }
 
 func WarningPanicf(format string, v ...any) {
-	logx.WarningLevel.Panicf(format, v)
+	s := fmt.Sprintf(format, v...)
+	logx.WarningLevel.Output(2, s)
+	panic(s)
 }
 
 func WarningPanicln(v ...any) {
-	logx.WarningLevel.Panicln(v)
+	s := fmt.Sprintln(v...)
+	logx.WarningLevel.Output(2, s)
+	panic(s)
 }

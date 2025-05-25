@@ -30,7 +30,7 @@ var defaultConfig = LogConfig{
 		isConsole:   true,
 		ConsoleMode: ErrorMode,
 	},
-	Flags: log.Ldate | log.Ltime | log.Lshortfile,
+	Flags: log.Ldate | log.Ltime | log.Llongfile,
 }
 
 var (
@@ -53,11 +53,11 @@ func init() {
 	if err := InitLogger(nil); err != nil {
 		_, _ = fmt.Fprintf(os.Stderr, "Failed to initialize default logger: %v\n", err)
 		// 回退到基本日志配置
-		TraceLevel = log.New(io.Discard, "TRACE: ", log.Ldate|log.Ltime|log.Lshortfile)
-		InfoLevel = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Lshortfile)
-		DeBugLevel = log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Lshortfile)
-		WarningLevel = log.New(os.Stdout, "WARNING: ", log.Ldate|log.Ltime|log.Lshortfile)
-		ErrorLevel = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Lshortfile)
+		TraceLevel = log.New(io.Discard, "TRACE: ", log.Ldate|log.Ltime|log.Llongfile)
+		InfoLevel = log.New(os.Stdout, "INFO: ", log.Ldate|log.Ltime|log.Llongfile)
+		DeBugLevel = log.New(os.Stdout, "DEBUG: ", log.Ldate|log.Ltime|log.Llongfile)
+		WarningLevel = log.New(os.Stdout, "WARNING: ", log.Ldate|log.Ltime|log.Llongfile)
+		ErrorLevel = log.New(os.Stderr, "ERROR: ", log.Ldate|log.Ltime|log.Llongfile)
 	}
 }
 

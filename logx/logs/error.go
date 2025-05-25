@@ -1,40 +1,53 @@
 package logs
 
-import "common-toolkits-v1/logx"
+import (
+	"common-toolkits-v1/logx"
+	"fmt"
+	"os"
+)
 
 // Error 函数
 func Error(v ...any) {
-	logx.ErrorLevel.Print(v)
+	logx.ErrorLevel.Output(2, fmt.Sprint(v...))
 }
 
 func Errorf(info string, v ...any) {
-	logx.ErrorLevel.Printf(info, v)
+	logx.ErrorLevel.Output(2, fmt.Sprintf(info, v...))
 }
 
 func Errorln(v any) {
-	logx.ErrorLevel.Println(v)
+	logx.ErrorLevel.Output(2, fmt.Sprintln(v))
 }
 
 func ErrorFatal(v ...any) {
-	logx.ErrorLevel.Fatal(v)
+	logx.ErrorLevel.Output(2, fmt.Sprint(v...))
+	os.Exit(1)
 }
 
 func ErrorFatalf(format string, v ...any) {
-	logx.ErrorLevel.Fatalf(format)
+	logx.ErrorLevel.Output(2, fmt.Sprintf(format, v...))
+	os.Exit(1)
 }
 
 func ErrorFatalln(v ...any) {
-	logx.ErrorLevel.Fatalln(v)
+	logx.ErrorLevel.Output(2, fmt.Sprintln(v...))
+	os.Exit(1)
 }
 
 func ErrorPanic(v ...any) {
-	logx.ErrorLevel.Panic(v)
+	s := fmt.Sprint(v...)
+	logx.ErrorLevel.Output(2, s)
+	panic(s)
 }
 
 func ErrorPanicf(format string, v ...any) {
-	logx.ErrorLevel.Panicf(format, v)
+	s := fmt.Sprintf(format, v...)
+	logx.ErrorLevel.Output(2, s)
+	panic(s)
 }
 
 func ErrorPanicln(v ...any) {
-	logx.ErrorLevel.Panicln(v)
+	s := fmt.Sprintln(v...)
+	logx.ErrorLevel.Output(2, s)
+	panic(s)
 }

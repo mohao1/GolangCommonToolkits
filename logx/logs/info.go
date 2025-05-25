@@ -1,40 +1,53 @@
 package logs
 
-import "common-toolkits-v1/logx"
+import (
+	"common-toolkits-v1/logx"
+	"fmt"
+	"os"
+)
 
 // Info 函数
 func Info(v ...any) {
-	logx.InfoLevel.Print(v)
+	logx.InfoLevel.Output(2, fmt.Sprint(v...))
 }
 
 func Infof(info string, v ...any) {
-	logx.InfoLevel.Printf(info, v)
+	logx.InfoLevel.Output(2, fmt.Sprintf(info, v...))
 }
 
 func Infoln(v any) {
-	logx.InfoLevel.Println(v)
+	logx.InfoLevel.Output(2, fmt.Sprintln(v))
 }
 
 func InfoFatal(v ...any) {
-	logx.InfoLevel.Fatal(v)
+	logx.InfoLevel.Output(2, fmt.Sprint(v...))
+	os.Exit(1)
 }
 
 func InfoFatalf(format string, v ...any) {
-	logx.InfoLevel.Fatalf(format)
+	logx.InfoLevel.Output(2, fmt.Sprintf(format, v...))
+	os.Exit(1)
 }
 
 func InfoFatalln(v ...any) {
-	logx.InfoLevel.Fatalln(v)
+	logx.InfoLevel.Output(2, fmt.Sprintln(v...))
+	os.Exit(1)
 }
 
 func InfoPanic(v ...any) {
-	logx.InfoLevel.Panic(v)
+	s := fmt.Sprint(v...)
+	logx.InfoLevel.Output(2, s)
+	panic(s)
 }
 
 func InfoPanicf(format string, v ...any) {
-	logx.InfoLevel.Panicf(format, v)
+	s := fmt.Sprintf(format, v...)
+	logx.InfoLevel.Output(2, s)
+	panic(s)
 }
 
 func InfoPanicln(v ...any) {
-	logx.InfoLevel.Panicln(v)
+	s := fmt.Sprintln(v...)
+	logx.InfoLevel.Output(2, s)
+	panic(s)
 }
