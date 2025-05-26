@@ -14,8 +14,8 @@ import (
 func TestNewTemp(t *testing.T) {
 
 	structInfo := config.TemplateField{
-		DoName:        "UserDo",
-		DoPackage:     "test",
+		QueryName:     "UserDo",
+		QueryPackage:  "test",
 		ModelName:     "User",
 		ModelPackage:  "entity",
 		ModelLinkPath: "common-toolkits-v1/GormXGens/go_template/entity",

@@ -89,12 +89,20 @@ func (x *XGen) CreateXGenQuery() error {
 		ParentName := lowercaseFirst(doName)
 		ExtendName := doName
 
+		PrimaryKey, IndexList, err := x.getKeyData(*modelObject)
+		if err != nil {
+			logs.Error("get key data err:", err)
+			return err
+		}
+
 		fileTemp := config.TemplateField{
-			DoName:        ParentName,
-			DoPackage:     x.xGenConfig.QueryPkgName,
+			QueryName:     ParentName,
+			QueryPackage:  x.xGenConfig.QueryPkgName,
 			ModelName:     modelObject.ModelName,
 			ModelPackage:  modelPackage,
 			ModelLinkPath: imp,
+			PrimaryKey:    PrimaryKey,
+			IndexList:     IndexList,
 		}
 
 		queryFile := fmt.Sprintf("%v_query.gen.go", x.xGenConfig.GenModelList[k])
@@ -245,4 +253,42 @@ func (x *XGen) getGenModelListPaths() ([]string, error) {
 		modelPathList = append(modelPathList, p)
 	}
 	return modelPathList, nil
+}
+
+func (x *XGen) getKeyData(modelObject ModelObject) (*config.PrimaryKeyData, []config.IndexKeyData, error) {
+
+	IndexList := make([]config.IndexKeyData, 0)
+	isPrimaryKey := false
+	var primaryKeyData *config.PrimaryKeyData
+
+	for _, filed := range modelObject.FieldMap {
+
+		// 主键处理
+		if filed.GormTag.IsPrimaryKey {
+			primaryKeyData = &config.PrimaryKeyData{
+				Name:   filed.FieldName,
+				Type:   fmt.Sprint(filed.FieldType),
+				Column: filed.FieldColumn,
+			}
+			isPrimaryKey = true
+			continue
+		}
+
+		// 索引处理
+		if filed.GormTag.IsIndex {
+			data := config.IndexKeyData{
+				Name:   filed.FieldName,
+				Type:   fmt.Sprint(filed.FieldType),
+				Column: filed.FieldColumn,
+			}
+			IndexList = append(IndexList, data)
+		}
+
+	}
+
+	if !isPrimaryKey {
+		return nil, IndexList, nil
+	}
+
+	return primaryKeyData, IndexList, nil
 }

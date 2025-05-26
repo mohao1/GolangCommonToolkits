@@ -1,4 +1,4 @@
-// 扩展自query的实现
+// Package query Implementation of Extended Self Query （扩展自query的实现）
 package {{.QueryPackage}}
 
 import (
@@ -6,7 +6,7 @@ import (
 	"sync"
 )
 
-// 单例存储
+// Single instance storage （单例存储）
 var query *{{.ExtendName}}
 var one sync.Once
 
@@ -23,4 +23,4 @@ func New{{.ExtendName}}(db *gorm.DB) *{{.ExtendName}} {
 	return query
 }
 
-// 扩展方法可以在这实现
+// The extension method can be implemented here （扩展方法可以在这实现）

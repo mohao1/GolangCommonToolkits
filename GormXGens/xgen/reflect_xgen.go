@@ -14,6 +14,7 @@ import (
 type FieldInfo struct {
 	FieldName    string            // 字段名称
 	FieldType    ast.Expr          // 数据类型
+	FieldColumn  string            // 数据库的字段名称Gorm中的Column
 	FieldGormTag reflect.StructTag // Gorm的Tag
 	GormTag      GormTag           // Gorm数据信息
 	FieldJsonTag reflect.StructTag // Json的Tag
@@ -85,6 +86,8 @@ func ParseStructFromFile(filePath string) (*ModelObject, error) {
 					info.FieldGormTag = parseTag(tagValue, "gorm")
 					// 解析gorm标签配置
 					info.GormTag = parseGormTag(string(info.FieldGormTag))
+					// 解析gorm的Column
+					info.FieldColumn = parseGORMColumn(string(info.FieldGormTag))
 					// 解析json标签
 					info.FieldJsonTag = parseTag(tagValue, "json")
 				}
@@ -205,4 +208,38 @@ func parseInt(s string) (int, error) {
 	var result int
 	_, err := fmt.Sscanf(s, "%d", &result)
 	return result, err
+}
+
+// ParseGORMColumn 从GORM标签中提取column值
+func parseGORMColumn(tag string) string {
+	// 处理空标签
+	if tag == "" {
+		return ""
+	}
+
+	// 按分号分割标签中的各个参数
+	params := strings.Split(tag, ";")
+
+	for _, param := range params {
+		param = strings.TrimSpace(param)
+		if param == "" {
+			continue
+		}
+
+		// 分割键值对
+		parts := strings.SplitN(param, ":", 2)
+		if len(parts) != 2 {
+			continue // 跳过没有值的参数（如primaryKey）
+		}
+
+		key := strings.TrimSpace(parts[0])
+		value := strings.TrimSpace(parts[1])
+
+		// 找到column参数
+		if key == "column" {
+			return value
+		}
+	}
+
+	return "" // 未找到column参数
 }

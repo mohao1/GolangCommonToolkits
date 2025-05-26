@@ -5,7 +5,7 @@ import (
 	"sync"
 )
 
-// 单例存储
+// Single instance storage （单例存储）
 var do *UserDo
 var one sync.Once
 
@@ -22,4 +22,4 @@ func NewUserDo(db *gorm.DB) *UserDo {
 	return do
 }
 
-// 扩展方法可以在这实现
+// The extension method can be implemented here （扩展方法可以在这实现）

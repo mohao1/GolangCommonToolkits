@@ -13,4 +13,5 @@ type XGenConfig struct {
 	QueryPkgPath string     // 生成的Query操作的文件路径
 	QueryPkgName string     // Pkg名称
 	ModelPkgPath string     // Model的生成路径
+
 }
