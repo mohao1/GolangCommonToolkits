@@ -3,6 +3,7 @@ package xgen
 import (
 	"common-toolkits-v1/GormXGens/config"
 	"common-toolkits-v1/logx/logs"
+	_ "embed"
 	"fmt"
 	"gorm.io/driver/mysql"
 	"gorm.io/gen"
@@ -11,9 +12,18 @@ import (
 	"os"
 	"path"
 	"path/filepath"
+	"runtime"
 	"strings"
 	"text/template"
 )
+
+// 配置静态模板
+
+//go:embed template/xgen_template.tpl
+var xgenTemplate []byte
+
+//go:embed template/xgen_template_extend.tpl
+var xgenTemplateExtend []byte
 
 // XGen XGen对象
 type XGen struct {
@@ -108,7 +118,7 @@ func (x *XGen) CreateXGenQuery() error {
 		queryFile := fmt.Sprintf("%v_query.gen.go", x.xGenConfig.GenModelList[k])
 		createPath := path.Join(x.xGenConfig.QueryPkgPath, x.xGenConfig.GenModelList[k], queryFile)
 
-		err = x.createXGenTemplate(fileTemp, "../template/xgen_template.tpl", createPath)
+		err = x.createXGenTemplate(fileTemp, xgenTemplate, createPath)
 		if err != nil {
 			return err
 		}
@@ -121,7 +131,7 @@ func (x *XGen) CreateXGenQuery() error {
 		extendFile := fmt.Sprintf("%v_extend.go", x.xGenConfig.GenModelList[k])
 		extendPath := path.Join(x.xGenConfig.QueryPkgPath, x.xGenConfig.GenModelList[k], extendFile)
 
-		err = x.createXGenTemplate(fieldExtend, "../template/xgen_template_extend.tpl", extendPath)
+		err = x.createXGenTemplate(fieldExtend, xgenTemplateExtend, extendPath)
 		if err != nil {
 			return err
 		}
@@ -131,15 +141,9 @@ func (x *XGen) CreateXGenQuery() error {
 }
 
 // 根据filed和模板生成对应操作文件
-func (x *XGen) createXGenTemplate(filed any, templatePath, createPath string) error {
+func (x *XGen) createXGenTemplate(filed any, templateBytes []byte, createPath string) error {
 
-	templateContent, err := os.ReadFile(templatePath)
-	if err != nil {
-		logs.Error(err)
-		return err
-	}
-
-	parseTemp, err := template.New("xgen_template").Parse(string(templateContent))
+	parseTemp, err := template.New("xgen_template").Parse(string(templateBytes))
 	if err != nil {
 		logs.Errorf("解析模板出错: %v\n", err)
 		return err
@@ -291,4 +295,9 @@ func (x *XGen) getKeyData(modelObject ModelObject) (*config.PrimaryKeyData, []co
 	}
 
 	return primaryKeyData, IndexList, nil
+}
+
+func T() {
+	_, currentFile, _, _ := runtime.Caller(0)
+	fmt.Println(currentFile)
 }
