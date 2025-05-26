@@ -101,7 +101,6 @@ func TestXGen(t *testing.T) {
 		GenModelList: []string{"users", "apply_link_doctor"},
 		ProjectPath:  "golang-common-toolkits",
 		QueryPkgPath: "../model/query",
-		QueryPkgName: "query",
 		ModelPkgPath: "../model/entity",
 	}
 
