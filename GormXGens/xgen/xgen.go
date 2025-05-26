@@ -17,7 +17,7 @@ import (
 )
 
 // 配置静态模板
-
+//
 //go:embed template/xgen_template.tpl
 var xgenTemplate []byte
 
@@ -51,6 +51,19 @@ func (x *XGen) InitDB() error {
 		logs.Error(err)
 	}
 	x.db = db
+	return nil
+}
+
+// CreateXGen 快捷创建Model+Query
+func (x *XGen) CreateXGen() error {
+	err := x.CreateXGenModel()
+	if err != nil {
+		return err
+	}
+	err = x.CreateXGenQuery()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
