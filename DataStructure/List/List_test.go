@@ -1,8 +1,8 @@
 package List
 
 import (
-	"common-toolkits-v1/List/BLinkList"
-	"common-toolkits-v1/List/LinkList"
+	"common-toolkits-v1/DataStructure/List/BLinkList"
+	"common-toolkits-v1/DataStructure/List/LinkList"
 	"fmt"
 	"testing"
 )

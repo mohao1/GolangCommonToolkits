@@ -1,8 +1,8 @@
 package Heap
 
 import (
-	"common-toolkits-v1/Heap/MaxHeap"
-	"common-toolkits-v1/Heap/MinHeap"
+	"common-toolkits-v1/DataStructure/Heap/MaxHeap"
+	"common-toolkits-v1/DataStructure/Heap/MinHeap"
 	"container/heap"
 	"fmt"
 	"testing"

@@ -1,8 +1,8 @@
 package Queue
 
 import (
-	"common-toolkits-v1/Queue/LinkQueue"
-	"common-toolkits-v1/Queue/Queue"
+	"common-toolkits-v1/DataStructure/Queue/LinkQueue"
+	"common-toolkits-v1/DataStructure/Queue/Queue"
 	"fmt"
 	"testing"
 )

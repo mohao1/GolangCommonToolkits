@@ -1,8 +1,8 @@
 package Stack
 
 import (
-	"common-toolkits-v1/Stack/LinkStack"
-	"common-toolkits-v1/Stack/Stack"
+	"common-toolkits-v1/DataStructure/Stack/LinkStack"
+	"common-toolkits-v1/DataStructure/Stack/Stack"
 	"fmt"
 	"testing"
 )
