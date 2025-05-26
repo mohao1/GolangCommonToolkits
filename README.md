@@ -9,6 +9,7 @@ Golang常用数据扩展工具包。
 
 ## 功能设计
 
+### 数据结构模块
 **模块设计**
 1. Heap 堆
    - 大顶堆：maxHeap。
@@ -27,7 +28,24 @@ Golang常用数据扩展工具包。
 6. List：链表
    - LinkList：单向链表
    - BLinkList：双向链表
-7. RedisQueue：Redis实现队列
+
+### Redis工具实现
+**模块设计**
+1. RedisQueue：Redis实现队列
+2. RedisLock：Redis实现的分布式锁
+   - 互斥锁
+   - 读写锁 = 等待更新
+
+### 日志工具
+**模块设计**
+1. Logger日志
+   - logs
+   - logx
+
+### ORM快速代码生成工具
+**模块设计**
+1. XGen 基于Gorm的代码生成实现
+   - 通过模板实现Gorm的操作简易封装
 
 **持续更新**
 
