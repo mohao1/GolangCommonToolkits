@@ -1,4 +1,4 @@
-// Package query Implementation of Extended Self Query （扩展自query的实现）
+// Package {{.QueryPackage}} Implementation of Extended Self Query （扩展自query的实现）
 package {{.QueryPackage}}
 
 import (

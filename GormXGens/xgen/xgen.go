@@ -104,9 +104,11 @@ func (x *XGen) CreateXGenQuery() error {
 			return err
 		}
 
+		QueryPackage := x.xGenConfig.GenModelList[k]
+
 		fileTemp := config.TemplateField{
 			QueryName:     ParentName,
-			QueryPackage:  x.xGenConfig.QueryPkgName,
+			QueryPackage:  QueryPackage,
 			ModelName:     modelObject.ModelName,
 			ModelPackage:  modelPackage,
 			ModelLinkPath: imp,
@@ -125,7 +127,7 @@ func (x *XGen) CreateXGenQuery() error {
 		fieldExtend := config.TemplateFieldExtend{
 			ParentName:   ParentName,
 			ExtendName:   ExtendName,
-			QueryPackage: x.xGenConfig.QueryPkgName,
+			QueryPackage: QueryPackage,
 		}
 		extendFile := fmt.Sprintf("%v_extend.go", x.xGenConfig.GenModelList[k])
 		extendPath := path.Join(x.xGenConfig.QueryPkgPath, x.xGenConfig.GenModelList[k], extendFile)
