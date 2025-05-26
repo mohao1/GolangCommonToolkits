@@ -12,7 +12,6 @@ import (
 	"os"
 	"path"
 	"path/filepath"
-	"runtime"
 	"strings"
 	"text/template"
 )
@@ -295,9 +294,4 @@ func (x *XGen) getKeyData(modelObject ModelObject) (*config.PrimaryKeyData, []co
 	}
 
 	return primaryKeyData, IndexList, nil
-}
-
-func T() {
-	_, currentFile, _, _ := runtime.Caller(0)
-	fmt.Println(currentFile)
 }
