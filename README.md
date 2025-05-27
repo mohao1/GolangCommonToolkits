@@ -1,4 +1,4 @@
-# Golang常用工具包
+# CubeGo
 
 ## 介绍
 Golang常用数据扩展工具包。

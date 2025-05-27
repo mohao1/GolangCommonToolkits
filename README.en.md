@@ -1,11 +1,11 @@
-# Golang Common Toolkits
+# CubeGo
 
 ## Introduction
 Common data extension toolkits for Golang.
 
 ## Project Links
-- GitHub: https://github.com/mohao1/GolangCommonToolkits?tab=readme-ov-file
-- Gitee: https://gitee.com/mohaos/golang-common-toolkits
+- GitHub: https://github.com/mohao1/CubeGo
+- Gitee: https://gitee.com/mohaos/CubeGo
 
 ## Functional Design
 
