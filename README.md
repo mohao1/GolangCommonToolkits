@@ -5,7 +5,7 @@ Golang常用数据扩展工具包。
 
 ## 项目地址
 - GitHub:https://github.com/mohao1/CubeGo
-- Gitee:https://gitee.com/mohaos/golang-common-toolkits
+- Gitee:https://gitee.com/mohaos/CubeGo
 
 ## 功能设计
 
