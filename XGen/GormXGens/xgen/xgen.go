@@ -154,6 +154,56 @@ func (x *XGen) CreateXGenQuery() error {
 	return nil
 }
 
+// CreateXGenQueryCustomTemplate 生成模板操作
+func (x *XGen) CreateXGenQueryCustomTemplate(parentTemplatePath, extendTemplatePath string, f CreateXGenCustom) error {
+
+	// 获取需要更新model文件的位置
+	modelListPaths, err := x.getGenModelListPaths()
+	if err != nil {
+		return err
+	}
+
+	for k, p := range modelListPaths {
+		modelObject, err := x.reflectXGenModel(p)
+		if err != nil {
+			return err
+		}
+
+		fileTemp, fieldExtend, err := f(modelObject, x.xGenConfig)
+		if err != nil {
+			return err
+		}
+
+		// 生成Parent
+		queryFile := fmt.Sprintf("%v_query.gen.go", x.xGenConfig.GenModelList[k])
+		createPath := path.Join(x.xGenConfig.QueryPkgPath, x.xGenConfig.GenModelList[k], queryFile)
+		// 读取自定义的Parent代码生成模板
+		templateParent, err := os.ReadFile(parentTemplatePath)
+		if err != nil {
+			return err
+		}
+		err = x.createXGenTemplate(fileTemp, templateParent, createPath)
+		if err != nil {
+			return err
+		}
+
+		// 生成Extend
+		extendFile := fmt.Sprintf("%v_extend.go", x.xGenConfig.GenModelList[k])
+		extendPath := path.Join(x.xGenConfig.QueryPkgPath, x.xGenConfig.GenModelList[k], extendFile)
+		// 读取自定义的Extend代码生成模板
+		templateExtend, err := os.ReadFile(extendTemplatePath)
+		if err != nil {
+			return err
+		}
+		err = x.createXGenTemplate(fieldExtend, templateExtend, extendPath)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // 根据filed和模板生成对应操作文件
 func (x *XGen) createXGenTemplate(filed any, templateBytes []byte, createPath string) error {
 
