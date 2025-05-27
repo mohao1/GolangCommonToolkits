@@ -2,25 +2,15 @@ package RedisQueue
 
 import (
 	"context"
-	"crypto/tls"
 	"errors"
 	"github.com/go-redis/redis/v8"
 )
 
+// Interface RedisClient接口
 type Interface interface {
 	LPushCtx(ctx context.Context, key string, value interface{}) (int, error)
 	RPopCtx(ctx context.Context, key string) (string, error)
 	LLenCtx(ctx context.Context, key string) (int, error)
-}
-
-type RedisConfig struct {
-	Addr      string
-	Pass      string
-	DB        int
-	IsTLS     bool
-	TLSConfig *tls.Config
-	IsLimiter bool
-	Limiter   redis.Limiter
 }
 
 type RedisClient struct {
