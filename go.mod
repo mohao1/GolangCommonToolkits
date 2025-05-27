@@ -6,10 +6,10 @@ toolchain go1.23.6
 
 require (
 	github.com/go-redis/redis/v8 v8.11.5
+	gopkg.in/yaml.v2 v2.4.0
 	gorm.io/driver/mysql v1.5.7
 	gorm.io/gen v0.3.27
 	gorm.io/gorm v1.26.1
-	gorm.io/plugin/dbresolver v1.6.0
 )
 
 require (
@@ -26,4 +26,5 @@ require (
 	golang.org/x/tools v0.33.0 // indirect
 	gorm.io/datatypes v1.2.5 // indirect
 	gorm.io/hints v1.1.2 // indirect
+	gorm.io/plugin/dbresolver v1.6.0 // indirect
 )

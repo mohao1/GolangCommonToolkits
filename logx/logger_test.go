@@ -1,6 +1,8 @@
 package logx
 
 import (
+	"common-toolkits-v1/ConfigureParser/YamlParser"
+	"fmt"
 	"log"
 	"testing"
 )
@@ -16,25 +18,25 @@ func TestInitLogger(t *testing.T) {
 
 	err := InitLogger(&LogConfig{
 		TraceOutput: OutputInfo{
-			isConsole:   true,
+			IsConsole:   true,
 			ConsoleMode: InfoMode,
 		},
 		InfoOutput: OutputInfo{
-			isConsole:   true,
+			IsConsole:   true,
 			ConsoleMode: InfoMode,
 		},
 		WarningOutput: OutputInfo{
-			isConsole:    true,
+			IsConsole:    true,
 			ConsoleMode:  InfoMode,
-			isOutputFile: true,
+			IsOutputFile: true,
 			OutputFile: []string{
 				"./warning.log",
 			},
 		},
 		ErrorOutput: OutputInfo{
-			isConsole:    true,
+			IsConsole:    true,
 			ConsoleMode:  ErrorMode,
-			isOutputFile: true,
+			IsOutputFile: true,
 			OutputFile: []string{
 				"./error.log",
 			},
@@ -49,4 +51,14 @@ func TestInitLogger(t *testing.T) {
 	InfoLevel.Println("Info-输出")
 	WarningLevel.Println("Warning-输出")
 	ErrorLevel.Println("Error-输出")
+}
+
+func TestConfigYaml(t *testing.T) {
+	yamlParser := YamlParser.NewYamlParser()
+	logConfigParser := LogConfigParser{}
+	err := yamlParser.ConfigureParser("./logger_config.yaml", &logConfigParser)
+	if err != nil {
+		return
+	}
+	fmt.Println(logConfigParser)
 }

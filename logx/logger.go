@@ -1,6 +1,8 @@
 package logx
 
 import (
+	"common-toolkits-v1/ConfigureParser/YamlParser"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -11,23 +13,23 @@ import (
 
 var defaultConfig = LogConfig{
 	TraceOutput: OutputInfo{
-		isConsole:   true,
+		IsConsole:   true,
 		ConsoleMode: DiscardMode,
 	},
 	InfoOutput: OutputInfo{
-		isConsole:   true,
+		IsConsole:   true,
 		ConsoleMode: InfoMode,
 	},
 	DeBugOutput: OutputInfo{
-		isConsole:   true,
+		IsConsole:   true,
 		ConsoleMode: InfoMode,
 	},
 	WarningOutput: OutputInfo{
-		isConsole:   true,
+		IsConsole:   true,
 		ConsoleMode: InfoMode,
 	},
 	ErrorOutput: OutputInfo{
-		isConsole:   true,
+		IsConsole:   true,
 		ConsoleMode: ErrorMode,
 	},
 	Flags: log.Ldate | log.Ltime | log.Llongfile,
@@ -61,6 +63,35 @@ func init() {
 	}
 }
 
+// InitLoggerYaml 解析Yaml配置文件配置Config
+func InitLoggerYaml(configYamlPath string) error {
+	yamlParser := YamlParser.NewYamlParser()
+	logConfigParser := LogConfigParser{}
+	err := yamlParser.ConfigureParser("./logger_config.yaml", &logConfigParser)
+	if err != nil {
+		fmt.Println("Failed to parse logger config")
+		return err
+	}
+	// 解析数据 文件解析数据 => 配置文件数据
+	logConfig := &LogConfig{
+		TraceOutput:   HashOutput(logConfigParser.TraceOutput),
+		InfoOutput:    HashOutput(logConfigParser.InfoOutput),
+		DeBugOutput:   HashOutput(logConfigParser.DeBugOutput),
+		WarningOutput: HashOutput(logConfigParser.WarningOutput),
+		ErrorOutput:   HashOutput(logConfigParser.ErrorOutput),
+		Flags:         HashFlags(logConfigParser.Flags),
+	}
+
+	// 初始化数据的信息
+	err = InitLogger(logConfig)
+	if err != nil {
+		fmt.Println("Failed to initialize logger config")
+		return err
+	}
+
+	return nil
+}
+
 // InitLogger 初始化日志系统（可在运行时重新配置）
 func InitLogger(config *LogConfig) error {
 	mu.Lock()
@@ -73,6 +104,11 @@ func InitLogger(config *LogConfig) error {
 
 	// 初始化日志输出
 	var err error
+
+	if config.Flags == 0 {
+		e := fmt.Sprint("config.Flags is 0")
+		return errors.New(e)
+	}
 
 	// Trace - 追踪日志
 	TraceLevel, err = createLogger(config.TraceOutput, "TRACE: ", config.Flags)
@@ -118,7 +154,7 @@ func createLogger(outputInfo OutputInfo, prefix string, flags int) (*log.Logger,
 		outputInfo.ConsoleMode == InfoMode ||
 		outputInfo.ConsoleMode == ErrorMode
 
-	if outputInfo.isConsole && isMode {
+	if outputInfo.IsConsole && isMode {
 		writer, err := createWriter(outputInfo.ConsoleMode)
 		if err != nil {
 			return nil, err
@@ -132,7 +168,7 @@ func createLogger(outputInfo OutputInfo, prefix string, flags int) (*log.Logger,
 		writerList = append(writerList, writer)
 	}
 
-	if outputInfo.isOutputFile {
+	if outputInfo.IsOutputFile {
 		for _, output := range outputInfo.OutputFile {
 			writer, err := createWriter(ConsoleMode(output))
 			if err != nil {

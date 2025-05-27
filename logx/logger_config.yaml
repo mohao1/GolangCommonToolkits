@@ -1,0 +1,29 @@
+ModeType: dev
+Flags:
+  - Ldate
+  - Ltime
+  - Llongfile
+
+TraceOutput:
+  IsConsole: true
+  ConsoleMode: discard
+  IsOutputFile: true
+  OutputFile:
+    - ./hello.html
+    - ./java.html
+
+InfoOutput:
+  IsConsole: true
+  ConsoleMode: discard
+  IsOutputFile: true
+  OutputFile:
+    - ./hello.html
+    - ./java.html
+
+DeBugOutput:
+  IsConsole: true
+  ConsoleMode: discard
+  IsOutputFile: true
+  OutputFile:
+    - ./hello.html
+    - ./java.html
