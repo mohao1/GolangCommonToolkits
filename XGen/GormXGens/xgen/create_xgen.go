@@ -62,3 +62,17 @@ func CreateXGenYamlConfig(yamlConfigPath string) {
 		return
 	}
 }
+
+// CreateXGenYamlConfigCustomTemplate 快速创建XGen生成自定义的模板代码的工具 - 输入配置文件、函数、模板路径即可
+func CreateXGenYamlConfigCustomTemplate(yamlConfigPath, parentTemplatePath, extendTemplatePath string, f CreateXGenCustom) {
+	xGen, err := YamlConfigNewXGen(yamlConfigPath)
+	if err != nil {
+		logs.Errorf("CreateXGenYamlConfig err %v", err)
+		return
+	}
+	err = xGen.CreateXGenCustomTemplate(parentTemplatePath, extendTemplatePath, f)
+	if err != nil {
+		logs.Errorf("CreateXGen err %v", err)
+		return
+	}
+}

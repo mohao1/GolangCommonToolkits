@@ -67,6 +67,19 @@ func (x *XGen) CreateXGen() error {
 	return nil
 }
 
+// CreateXGenCustomTemplate 快捷创建Model+Query(自定义的代码模板)
+func (x *XGen) CreateXGenCustomTemplate(parentTemplatePath, extendTemplatePath string, f CreateXGenCustom) error {
+	err := x.CreateXGenModel()
+	if err != nil {
+		return err
+	}
+	err = x.CreateXGenQueryCustomTemplate(parentTemplatePath, extendTemplatePath, f)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // CreateXGenModel 生成Model结构
 func (x *XGen) CreateXGenModel() error {
 	// 初始化gorm的Gen
