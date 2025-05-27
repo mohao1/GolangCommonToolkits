@@ -1,7 +1,7 @@
 package xgen
 
 import (
-	"common-toolkits-v1/GormXGens/config"
+	"common-toolkits-v1/XGen/GormXGens/config"
 	"common-toolkits-v1/logx/logs"
 	_ "embed"
 	"fmt"

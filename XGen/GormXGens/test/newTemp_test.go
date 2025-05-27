@@ -1,8 +1,9 @@
 package test
 
 import (
-	"common-toolkits-v1/GormXGens/config"
-	"common-toolkits-v1/GormXGens/xgen"
+	"common-toolkits-v1/ConfigureParser/YamlParser"
+	"common-toolkits-v1/XGen/GormXGens/config"
+	"common-toolkits-v1/XGen/GormXGens/xgen"
 	"common-toolkits-v1/logx/logs"
 	"fmt"
 	"gorm.io/gen"
@@ -87,7 +88,6 @@ func TestXGen(t *testing.T) {
 	dsn := "root:123456@tcp(localhost:3306)/health_system?charset=utf8mb4&parseTime=True&loc=Local"
 	g := gen.Config{
 		ModelPkgPath:      modelPath,
-		Mode:              gen.WithQueryInterface | gen.WithDefaultQuery,
 		FieldNullable:     true,
 		FieldCoverable:    false,
 		FieldSignable:     true,
@@ -119,4 +119,19 @@ func TestXGen(t *testing.T) {
 
 func TestLogs(t *testing.T) {
 	logs.Error("hello")
+}
+
+func TestYaml(t *testing.T) {
+	yamlParser := YamlParser.NewYamlParser()
+	configParser := config.XGenConfigParser{}
+	err := yamlParser.ConfigureParser("./xgen_config.yaml", &configParser)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+	fmt.Println(configParser)
+}
+
+func TestCreatXGen(t *testing.T) {
+	xgen.CreateXGenYamlConfig("./xgen_config.yaml")
 }

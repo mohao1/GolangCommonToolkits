@@ -1,8 +1,8 @@
 package do
 
 import (
-	"common-toolkits-v1/GormXGens/config"
-	"common-toolkits-v1/GormXGens/go_template/entity"
+	"common-toolkits-v1/XGen/GormXGens/config"
+	"common-toolkits-v1/XGen/GormXGens/go_template/entity"
 	"context"
 	"database/sql"
 	"gorm.io/gorm"

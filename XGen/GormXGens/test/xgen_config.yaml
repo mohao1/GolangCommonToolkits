@@ -1,0 +1,10 @@
+ModelConfig:
+  DNS: root:123456@tcp(localhost:3306)/health_system?charset=utf8mb4&parseTime=True&loc=Local
+  ModelPkgPath: model/entity
+QueryConfig:
+  GenModelList:
+    - users
+    - apply_link_doctor
+  ProjectPath: golang-common-toolkits
+  QueryPkgPath: ../model/query
+  ModelPkgPath: ../model/entity

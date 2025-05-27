@@ -28,11 +28,16 @@ func (y *YamlParser) ConfigureParser(configPath string, config any) error {
 	}
 	err = yaml.Unmarshal(data, config)
 	if err != nil {
-		return nil
+		return err
 	}
 
 	// 默认值的操作
 	setDefaults(reflect.ValueOf(config).Elem())
+
+	err = validateRequiredFields(config)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

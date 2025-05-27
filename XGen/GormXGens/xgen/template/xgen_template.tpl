@@ -4,7 +4,7 @@
 
 package {{.QueryPackage}}
 import (
-	"common-toolkits-v1/GormXGens/config"
+	"common-toolkits-v1/XGen/GormXGens/config"
 	"{{.ModelLinkPath}}"
     "context"
     "database/sql"
