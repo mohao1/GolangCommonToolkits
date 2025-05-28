@@ -11,7 +11,7 @@ import (
 func YamlConfigNewXGen(yamlConfigPath string) (*XGen, error) {
 	yamlParser := YamlParser.NewYamlParser()
 	configParser := config.XGenConfigParser{}
-	err := yamlParser.ConfigureParser("./xgen_config.yaml", &configParser)
+	err := yamlParser.ConfigureParser(yamlConfigPath, &configParser)
 	if err != nil {
 		logs.Errorf("yamlParser err %v", err)
 		return nil, err
