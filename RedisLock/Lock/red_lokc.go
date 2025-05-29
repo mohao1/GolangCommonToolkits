@@ -118,7 +118,7 @@ func (rl *RedLock) Lock(ctx context.Context) (bool, error) {
 
 	}
 
-	return false, ErrFailedToAcquireLock
+	return false, nil
 }
 
 // UnLock 释放锁

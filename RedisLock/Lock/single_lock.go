@@ -72,7 +72,7 @@ func (l *SingleLock) Lock(ctx context.Context) (bool, error) {
 		time.Sleep(delay)
 	}
 
-	return false, ErrFailedToAcquireLock
+	return false, nil
 }
 
 // UnLock 释放锁

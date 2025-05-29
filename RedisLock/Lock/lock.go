@@ -3,6 +3,7 @@ package Lock
 import (
 	"common-toolkits-v1/ConfigureParser/YamlParser"
 	"common-toolkits-v1/logx/logs"
+	"context"
 	"crypto/tls"
 	"errors"
 	"github.com/go-redis/redis/v8"
@@ -64,7 +65,7 @@ func NewRedisMutex(config MutexConfig) *RedisMutex {
 	}
 }
 
-func (r *RedisMutex) GetLock(resource string) (Interface, error) {
+func (r *RedisMutex) GetLock(ctx context.Context, resource string) (Interface, error) {
 	clientsLen := len(r.clients)
 	config := Config{
 		retryTimes: r.mutexConfig.LockConfig.RetryTimes,
@@ -101,6 +102,23 @@ func YamlConfigNewRedisMutex(yamlPath string) (*RedisMutex, error) {
 	if err != nil {
 		logs.Errorf("yamlParser err %v", err)
 		return nil, err
+	}
+
+	// 初始化的数据设置
+	if configParser.Expiry == 0 {
+		configParser.Expiry = defaultLockExpiry
+	}
+
+	if configParser.LockConfig.RetryTimes == 0 {
+		configParser.LockConfig.RetryTimes = defaultRetryTimes
+	}
+
+	if configParser.LockConfig.RetryDelay == 0 {
+		configParser.LockConfig.RetryDelay = defaultRetryDelay
+	}
+
+	if configParser.LockConfig.KeyPrefix == "" {
+		configParser.LockConfig.KeyPrefix = defaultKeyPrefix
 	}
 
 	redisMutex := NewRedisMutex(configParser)
