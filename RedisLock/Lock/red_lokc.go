@@ -13,10 +13,11 @@ const defaultClockDriftFactor = 0.01 // 时钟漂移因子
 type RedLock struct {
 	basicLocks []*BasicLock
 	Config
-	expiry   time.Duration // lock time - 设置锁的超时时间
-	quorum   int           // 法定人数
-	mu       sync.Mutex    // lock  - 锁的操作的锁
-	released bool          // is released - 是否已被释放
+	expiry        time.Duration // lock time - 设置锁的超时时间
+	quorum        int           // 法定人数
+	mu            sync.Mutex    // lock  - 锁的操作的锁
+	released      bool          // is released - 是否已被释放
+	completeLocks []*BasicLock  // 建立上锁连接列表
 }
 
 // NewRedLockDefault 创建新的锁实例 - 默认的值
@@ -100,6 +101,8 @@ func (rl *RedLock) Lock(ctx context.Context) (bool, error) {
 
 		// 检查是否达到法定人数且锁有效时间足够
 		if len(basicLocks) >= rl.quorum && validityTime > 0 {
+			rl.released = false
+			rl.completeLocks = basicLocks
 			return true, nil
 		}
 
@@ -133,7 +136,7 @@ func (rl *RedLock) UnLock(ctx context.Context) (bool, error) {
 
 	successCount := 0
 
-	for _, basicLock := range rl.basicLocks {
+	for _, basicLock := range rl.completeLocks {
 		ok, err := basicLock.unLock(ctx)
 		if err != nil {
 			continue
@@ -145,6 +148,7 @@ func (rl *RedLock) UnLock(ctx context.Context) (bool, error) {
 	}
 
 	rl.released = true
+	rl.completeLocks = nil
 
 	return successCount > 0, nil
 }
@@ -159,7 +163,7 @@ func (rl *RedLock) Renewal(ctx context.Context) (bool, error) {
 
 	successCount := 0
 
-	for _, basicLock := range rl.basicLocks {
+	for _, basicLock := range rl.completeLocks {
 		ok, err := basicLock.renewal(ctx)
 		if err != nil {
 			continue
@@ -183,7 +187,7 @@ func (rl *RedLock) TTL(ctx context.Context) (time.Duration, error) {
 	var minTTL time.Duration
 	first := true
 
-	for _, basicLock := range rl.basicLocks {
+	for _, basicLock := range rl.completeLocks {
 		ttl, err := basicLock.ttl(ctx)
 		if err != nil {
 			continue
