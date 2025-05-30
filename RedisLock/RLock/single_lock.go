@@ -27,7 +27,7 @@ func NewSingleRWLock(client redis.Client, resource string, rwConfig SingleRWLock
 			expiry:       rwConfig.expiry,
 		},
 		RWConfig: rwConfig.RWConfig,
-		released: false,
+		released: true,
 	}
 }
 
@@ -66,7 +66,9 @@ func (s *SingleRWLock) UnRLock(ctx context.Context) (bool, error) {
 		return false, err
 	}
 
-	s.released = true
+	if ok {
+		s.released = true
+	}
 
 	return ok, nil
 }
@@ -107,7 +109,9 @@ func (s *SingleRWLock) UnLock(ctx context.Context) (bool, error) {
 		return false, err
 	}
 
-	s.released = true
+	if ok {
+		s.released = true
+	}
 
 	return ok, nil
 }

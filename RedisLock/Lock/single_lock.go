@@ -32,7 +32,7 @@ func NewSingleLockDefault(client redis.UniversalClient, resource string) *Single
 			retryDelay: defaultRetryDelay,
 			keyPrefix:  defaultKeyPrefix,
 		},
-		released: false,
+		released: true,
 	}
 }
 
@@ -48,7 +48,7 @@ func NewSingleLock(client redis.UniversalClient, resource string, config *Single
 			expiry: config.expiry,
 		},
 		Config:   config.Config,
-		released: false,
+		released: true,
 	}
 }
 
@@ -89,7 +89,9 @@ func (l *SingleLock) UnLock(ctx context.Context) (bool, error) {
 		return false, err
 	}
 
-	l.released = true
+	if ok {
+		l.released = true
+	}
 
 	return ok, nil
 }
