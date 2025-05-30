@@ -6,6 +6,15 @@ import (
 	"time"
 )
 
+// 默认数值
+const (
+	defaultRetryTimes = 3
+	defaultRetryDelay = 100 * time.Millisecond
+	defaultLockExpiry = 10 * time.Second
+	defaultWKeyPrefix = "w-lock:"
+	defaultRKeyPrefix = "r-lock:"
+)
+
 type RWConfig struct {
 	retryTimes int           // retry count - 锁的重试次数
 	retryDelay time.Duration // retry time - 锁的重试间隔时间
