@@ -2,6 +2,7 @@ package RLock
 
 import (
 	"context"
+	"errors"
 	"github.com/go-redis/redis/v8"
 	"sync"
 	"time"
@@ -12,10 +13,11 @@ const defaultClockDriftFactor = 0.01 // 时钟漂移因子
 type RedRWLock struct {
 	basicRWLocks []*basicRWLock
 	RWConfig
-	expiry   time.Duration // lock time - 设置锁的超时时间
-	quorum   int           // 法定人数
-	mu       sync.Mutex    // lock  - 锁的操作的锁
-	released bool          // is released - 是否已被释放
+	expiry        time.Duration  // lock time - 设置锁的超时时间
+	quorum        int            // 法定人数
+	mu            sync.Mutex     // lock  - 锁的操作的锁
+	released      bool           // is released - 是否已被释放
+	completeLocks []*basicRWLock // 写锁建立上锁连接列表
 }
 
 func NewRedRWLock(clients []redis.Client, resource string, rwConfig RedRWLockConfig) *RedRWLock {
@@ -32,15 +34,20 @@ func NewRedRWLock(clients []redis.Client, resource string, rwConfig RedRWLockCon
 		}
 	}
 	return &RedRWLock{
-		basicRWLocks: basicRWLocks,
-		RWConfig:     rwConfig.RWConfig,
-		expiry:       rwConfig.expiry,
-		quorum:       (len(clients) / 2) + 1,
-		released:     false,
+		basicRWLocks:  basicRWLocks,
+		RWConfig:      rwConfig.RWConfig,
+		expiry:        rwConfig.expiry,
+		quorum:        (len(clients) / 2) + 1,
+		released:      true,
+		completeLocks: nil,
 	}
 }
 
 func (r *RedRWLock) RLock(ctx context.Context) (bool, error) {
+	if r.completeLocks != nil {
+		return false, errors.New("red_lock already used")
+	}
+
 	startTime := time.Now()
 	for i := 0; i < r.retryTimes; i++ {
 		// 重置
@@ -65,6 +72,8 @@ func (r *RedRWLock) RLock(ctx context.Context) (bool, error) {
 
 		// 检查是否达到法定人数且锁有效时间足够
 		if len(basicLocks) >= r.quorum && validityTime > 0 {
+			r.released = false
+			r.completeLocks = basicLocks
 			return true, nil
 		}
 
@@ -94,7 +103,7 @@ func (r *RedRWLock) UnRLock(ctx context.Context) (bool, error) {
 
 	successCount := 0
 
-	for _, basicLock := range r.basicRWLocks {
+	for _, basicLock := range r.completeLocks {
 		ok, err := basicLock.unRLock(ctx)
 		if err != nil {
 			continue
@@ -105,12 +114,21 @@ func (r *RedRWLock) UnRLock(ctx context.Context) (bool, error) {
 		}
 	}
 
-	r.released = true
+	completeLocksLen := len(r.completeLocks)
+	locksLen := len(r.basicRWLocks)
+	if (completeLocksLen - successCount) < (locksLen / 2) {
+		r.released = true
+		r.completeLocks = nil
+		return true, nil
+	}
 
-	return successCount > 0, nil
+	return false, nil
 }
 
 func (r *RedRWLock) Lock(ctx context.Context) (bool, error) {
+	if r.completeLocks != nil {
+		return false, errors.New("red_lock already used")
+	}
 	startTime := time.Now()
 	for i := 0; i < r.retryTimes; i++ {
 		// 重置
@@ -135,6 +153,8 @@ func (r *RedRWLock) Lock(ctx context.Context) (bool, error) {
 
 		// 检查是否达到法定人数且锁有效时间足够
 		if len(basicLocks) >= r.quorum && validityTime > 0 {
+			r.released = false
+			r.completeLocks = basicLocks
 			return true, nil
 		}
 
@@ -164,7 +184,7 @@ func (r *RedRWLock) UnLock(ctx context.Context) (bool, error) {
 
 	successCount := 0
 
-	for _, basicLock := range r.basicRWLocks {
+	for _, basicLock := range r.completeLocks {
 		ok, err := basicLock.unLock(ctx)
 		if err != nil {
 			continue
@@ -175,9 +195,15 @@ func (r *RedRWLock) UnLock(ctx context.Context) (bool, error) {
 		}
 	}
 
-	r.released = true
+	completeLocksLen := len(r.completeLocks)
+	locksLen := len(r.basicRWLocks)
+	if (completeLocksLen - successCount) < (locksLen / 2) {
+		r.released = true
+		r.completeLocks = nil
+		return true, nil
+	}
 
-	return successCount > 0, nil
+	return false, nil
 }
 
 func (r *RedRWLock) RenewRLock(ctx context.Context) (bool, error) {
@@ -190,7 +216,7 @@ func (r *RedRWLock) RenewRLock(ctx context.Context) (bool, error) {
 
 	successCount := 0
 
-	for _, basicLock := range r.basicRWLocks {
+	for _, basicLock := range r.completeLocks {
 		ok, err := basicLock.renewRLock(ctx)
 		if err != nil {
 			continue
@@ -213,7 +239,7 @@ func (r *RedRWLock) RenewLock(ctx context.Context) (bool, error) {
 
 	successCount := 0
 
-	for _, basicLock := range r.basicRWLocks {
+	for _, basicLock := range r.completeLocks {
 		ok, err := basicLock.renewLock(ctx)
 		if err != nil {
 			continue
@@ -237,7 +263,7 @@ func (r *RedRWLock) RLockTTL(ctx context.Context) (time.Duration, error) {
 	var minTTL time.Duration
 	first := true
 
-	for _, basicLock := range r.basicRWLocks {
+	for _, basicLock := range r.completeLocks {
 		ttl, err := basicLock.rLockTTL(ctx)
 		if err != nil {
 			continue
@@ -273,7 +299,7 @@ func (r *RedRWLock) LockTTL(ctx context.Context) (time.Duration, error) {
 	var minTTL time.Duration
 	first := true
 
-	for _, basicLock := range r.basicRWLocks {
+	for _, basicLock := range r.completeLocks {
 		ttl, err := basicLock.lockTTL(ctx)
 		if err != nil {
 			continue

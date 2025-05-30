@@ -2,6 +2,7 @@ package Lock
 
 import (
 	"context"
+	"errors"
 	"github.com/go-redis/redis/v8"
 	"sync"
 	"time"
@@ -43,9 +44,10 @@ func NewRedLockDefault(clients []redis.UniversalClient, resource string) *RedLoc
 			retryDelay: defaultRetryDelay,
 			keyPrefix:  defaultKeyPrefix,
 		},
-		expiry:   defaultLockExpiry,
-		quorum:   (len(clients) / 2) + 1,
-		released: false,
+		expiry:        defaultLockExpiry,
+		quorum:        (len(clients) / 2) + 1,
+		released:      true,
+		completeLocks: nil,
 	}
 }
 
@@ -66,16 +68,20 @@ func NewRedLock(clients []redis.UniversalClient, resource string, config *RedLoc
 	}
 
 	return &RedLock{
-		basicLocks: basicLocks,
-		Config:     config.Config,
-		expiry:     config.expiry,
-		quorum:     (len(clients) / 2) + 1,
-		released:   false,
+		basicLocks:    basicLocks,
+		Config:        config.Config,
+		expiry:        config.expiry,
+		quorum:        (len(clients) / 2) + 1,
+		released:      true,
+		completeLocks: nil,
 	}
 }
 
 // Lock 使用RedLock算法获取锁
 func (rl *RedLock) Lock(ctx context.Context) (bool, error) {
+	if rl.completeLocks != nil {
+		return false, errors.New("red_lock already used")
+	}
 	startTime := time.Now()
 
 	for i := 0; i < rl.retryTimes; i++ {
@@ -147,10 +153,16 @@ func (rl *RedLock) UnLock(ctx context.Context) (bool, error) {
 		}
 	}
 
-	rl.released = true
-	rl.completeLocks = nil
+	completeLocksLen := len(rl.completeLocks)
+	locksLen := len(rl.basicLocks)
+	// 失败的锁要小于总数的一半
+	if (completeLocksLen - successCount) < (locksLen / 2) {
+		rl.released = true
+		rl.completeLocks = nil
+		return true, nil
+	}
 
-	return successCount > 0, nil
+	return false, nil
 }
 
 func (rl *RedLock) Renewal(ctx context.Context) (bool, error) {
