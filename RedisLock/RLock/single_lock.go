@@ -104,7 +104,7 @@ func (s *SingleRWLock) UnLock(ctx context.Context) (bool, error) {
 		return false, nil
 	}
 
-	ok, err := s.basicRWLock.unRLock(ctx)
+	ok, err := s.basicRWLock.unLock(ctx)
 	if err != nil {
 		return false, err
 	}
